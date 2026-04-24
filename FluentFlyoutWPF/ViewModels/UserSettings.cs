@@ -601,6 +601,48 @@ public partial class UserSettings : ObservableObject
         ExclusiveTidalMode = true;
     }
 
+    partial void OnExclusiveTidalModeChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
+    partial void OnCompactLayoutChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
+    partial void OnMediaFlyoutEnabledChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
+    partial void OnSeekbarEnabledChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
+    partial void OnPlayerInfoEnabledChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
+    partial void OnNextUpEnabledChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
+    partial void OnLockKeysEnabledChanged(bool oldValue, bool newValue)
+    {
+        if (oldValue == newValue || _initializing) return;
+        SettingsManager.SaveSettings();
+    }
+
     /// <summary>
     /// Called after deserialization to finalize initialization
     /// </summary>
@@ -656,6 +698,7 @@ public partial class UserSettings : ObservableObject
         }
 
         UpdateTaskbar();
+        SettingsManager.SaveSettings();
     }
 
     // Update taskbar when relevant settings change
@@ -726,6 +769,7 @@ public partial class UserSettings : ObservableObject
         if (oldValue == newValue || _initializing) return;
         TaskbarVisualizerControl.OnTaskbarVisualizerEnabledChanged(newValue);
         UpdateTaskbar();
+        SettingsManager.SaveSettings();
     }
 
     partial void OnTaskbarVisualizerBarCountChanged(int oldValue, int newValue)
