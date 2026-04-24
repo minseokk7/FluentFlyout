@@ -1,6 +1,6 @@
 ; Inno Setup Script for FluentFlyout
 #define MyAppName "FluentFlyout"
-#define MyAppVersion "3.1.2"
+#define MyAppVersion "3.1.3"
 #define MyAppPublisher "minseokk7"
 #define MyAppURL "https://github.com/minseokk7/FluentFlyout"
 #define MyAppExeName "FluentFlyout.exe"
