@@ -1,4 +1,4 @@
-﻿<Page x:Class="FluentFlyoutWPF.Pages.HomePage"
+<Page x:Class="FluentFlyoutWPF.Pages.HomePage"
       xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
       xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -21,7 +21,7 @@
 
         <TextBlock Text="{DynamicResource HomeTitle}" FontSize="24" FontWeight="SemiBold" Margin="0,36,0,12" />
         <StackPanel Orientation="Horizontal">
-            <ui:Button x:Name="ViewUpdatesButton" Appearance="Transparent" Padding="0,0,16,0" BorderBrush="Transparent" Margin="0,0,16,16" Click="ViewUpdates_Click">
+            <ui:Button x:Name="ViewUpdatesButton" Visibility="Collapsed" Appearance="Transparent" Padding="0,0,16,0" BorderBrush="Transparent" Margin="0,0,16,16" Click="ViewUpdates_Click">
                 <StackPanel Orientation="Horizontal">
                     <Border CornerRadius="8" ClipToBounds="True" Width="200" Height="98" Margin="0,0,16,0">
                         <Border.Background>
@@ -36,7 +36,7 @@
             </ui:Button>
 
             <!--Update status indicator-->
-            <ui:Button Appearance="Transparent" Padding="8" BorderBrush="Transparent" Margin="0,0,16,16" Click="CheckForUpdates_Click">
+            <ui:Button Visibility="Collapsed" Appearance="Transparent" Padding="8" BorderBrush="Transparent" Margin="0,0,16,16" Click="CheckForUpdates_Click">
                 <StackPanel Orientation="Horizontal">
                     <ui:SymbolIcon x:Name="UpdateStatusIcon" FontSize="24" Margin="0,0,12,0">
                         <ui:SymbolIcon.Style>

@@ -1,0 +1,9 @@
+﻿C:\Users\minse\.gemini\antigravity\playground\spatial-kilonova\FluentFlyout\FluentFlyoutWPF\FluentFlyout.csproj(124,1): error MSB4025: ?꾨줈?앺듃 ?뚯씪??濡쒕뱶?????놁뒿?덈떎. Unexpected end of file has occurred. The following elements are not closed: Project. Line 124, position 1.
+
+鍮뚮뱶?섏? 紐삵뻽?듬땲??
+
+C:\Users\minse\.gemini\antigravity\playground\spatial-kilonova\FluentFlyout\FluentFlyoutWPF\FluentFlyout.csproj(124,1): error MSB4025: ?꾨줈?앺듃 ?뚯씪??濡쒕뱶?????놁뒿?덈떎. Unexpected end of file has occurred. The following elements are not closed: Project. Line 124, position 1.
+    寃쎄퀬 0媛?
+    ?ㅻ쪟 1媛?
+
+寃쎄낵 ?쒓컙: 00:00:00.02

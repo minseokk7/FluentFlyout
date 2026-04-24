@@ -1,4 +1,4 @@
-﻿using FluentFlyout.Classes.Settings;
+using FluentFlyout.Classes.Settings;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,9 +14,34 @@ namespace FluentFlyoutWPF.Classes.Utils
     {
         public static string GetLogsPath()
         {
-            return SettingsManager.Current.IsStoreVersion
-                ? Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, "Roaming", "FluentFlyout")
-                : Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FluentFlyout");
+            string path;
+            if (SettingsManager.Current.IsStoreVersion)
+            {
+                path = Path.Combine(ApplicationData.Current.LocalCacheFolder.Path, "Roaming", "FluentFlyout");
+            }
+            else
+            {
+                path = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "FluentFlyout");
+            }
+
+            // Check if Logs subfolder exists, if not use the base path
+            string logsSubPath = Path.Combine(path, "Logs");
+            if (Directory.Exists(logsSubPath))
+            {
+                return logsSubPath;
+            }
+
+            // Ensure the directory exists
+            if (!Directory.Exists(path))
+            {
+                try
+                {
+                    Directory.CreateDirectory(path);
+                }
+                catch { }
+            }
+
+            return path;
         }
     }
 }

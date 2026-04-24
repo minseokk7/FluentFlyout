@@ -1,0 +1,14 @@
+Reading: C:\Users\minse\AppData\Roaming\FluentFlyout\logs.2026-03-23 03-19-09.txt
+2026-03-23 03:19:09.9785|INFO|FluentFlyoutWPF.MainWindow|Starting FluentFlyout MainWindow
+2026-03-23 03:19:09.9927|INFO|FluentFlyout.Classes.Settings.SettingsManager|Settings successfully restored
+2026-03-23 03:19:10.0044|INFO|FluentFlyoutWPF.MainWindow|Current version: debug
+2026-03-23 03:19:10.0044|INFO|FluentFlyoutWPF.MainWindow|Initializing background app
+2026-03-23 03:19:10.1608|INFO|FluentFlyoutWPF.MainWindow|Rust Keyboard Hook registration result: True
+2026-03-23 03:19:10.1608|INFO|FluentFlyoutWPF.MainWindow|Rust Shell Hook registration result: True
+2026-03-23 03:19:10.3024|INFO|FluentFlyoutWPF.MainWindow|Tray icon registered: True
+2026-03-23 03:19:10.3024|INFO|FluentFlyout.Classes.LicenseManager|LicenseManager: Initializing
+2026-03-23 03:19:10.3139|INFO|FluentFlyout.Classes.LicenseManager|Non-Store version detected. Premium unlocked.
+2026-03-23 03:19:10.3139|INFO|FluentFlyoutWPF.MainWindow|License synced on startup - Store: False, Premium: True
+2026-03-23 03:19:10.3139|INFO|FluentFlyoutWPF.MainWindow|Creating TaskbarWindow instance...
+2026-03-23 03:19:10.3318|INFO|FluentFlyoutWPF.Classes.AudioDeviceMonitor|Audio device monitoring initialized
+2026-03-23 03:19:10.3813|INFO|FluentFlyoutWPF.MainWindow|TaskbarWindow created and UpdateTaskbar called.

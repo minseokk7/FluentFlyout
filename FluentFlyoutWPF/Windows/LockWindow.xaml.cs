@@ -1,4 +1,4 @@
-﻿// Copyright © 2024-2026 The FluentFlyout Authors
+// Copyright © 2024-2026 The FluentFlyout Authors
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 using FluentFlyout.Classes;
@@ -28,6 +28,7 @@ public partial class LockWindow : MicaWindow
         WindowHelper.SetNoActivate(this);
         InitializeComponent();
         WindowHelper.SetTopmost(this);
+        CustomWindowChrome.CaptionHeight = 0;
 
         WindowStartupLocation = WindowStartupLocation.Manual;
         Top = -9999; // start off-screen

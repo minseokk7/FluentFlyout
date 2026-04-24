@@ -205,7 +205,7 @@ public partial class MainWindow : MicaWindow
             FlowDirection = SettingsManager.Current.FlowDirection;
 
             // check for updates on startup
-            _ = CheckForUpdatesOnStartupAsync();
+            // _ = CheckForUpdatesOnStartupAsync();
         });
     }
 

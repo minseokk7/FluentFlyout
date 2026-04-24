@@ -1,0 +1,7 @@
+   Compiling fluent_flyout_core v0.1.0 (C:\Users\minse\.gemini\antigravity\playground\spatial-kilonova\FluentFlyout\fluent_flyout_core)
+src\lib.rs:15:25: error[E0432]: unresolved import `windows::Win32::UI::Shell`: could not find `Shell` in `UI`
+src\lib.rs:11:143: warning: unused import: `HOOKPROC`
+src\lib.rs:549:70: error[E0308]: mismatched types: expected `Option<HINSTANCE>`, found `HINSTANCE`
+src\lib.rs:492:5: warning[E0133]: call to unsafe function `windows::Win32::UI::WindowsAndMessaging::CallNextHookEx` is unsafe and requires unsafe block: call to unsafe function
+warning: `fluent_flyout_core` (lib) generated 2 warnings
+error: could not compile `fluent_flyout_core` (lib) due to 2 previous errors; 2 warnings emitted
