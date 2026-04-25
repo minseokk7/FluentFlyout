@@ -5,6 +5,7 @@ using FluentFlyout.Classes;
 using FluentFlyout.Classes.Settings;
 using FluentFlyout.Classes.Utils;
 using FluentFlyoutWPF.Classes;
+using FluentFlyoutWPF.Classes.Display;
 using MicaWPF.Controls;
 using System.Windows;
 using System.Windows.Media.Imaging;
@@ -16,7 +17,7 @@ namespace FluentFlyoutWPF.Windows;
 /// </summary>
 public partial class NextUpWindow : MicaWindow
 {
-    MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+    IDisplayHost mainWindow = (IDisplayHost)Application.Current.MainWindow;
     public NextUpWindow(string title, string artist, BitmapImage thumbnail)
     {
         DataContext = SettingsManager.Current;

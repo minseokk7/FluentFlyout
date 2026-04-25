@@ -1,0 +1,1725 @@
+﻿import { ScrollView, Slider } from "std-widgets.slint";
+import { WpfAnchorButton, WpfDashboardActionCard, WpfFooterLinkCard, WpfHeroBlock, WpfInfoBar, WpfNavigationRailItem, WpfPageHeader, WpfSelectCard, WpfStepperCard, WpfTitleBlock, WpfToggleCard } from "components/wpf_shell.slint";
+
+component ControlChip inherits Rectangle {
+    in property <string> label;
+    in property <bool> emphasized: false;
+    in property <bool> enabled: true;
+    in property <float> glyphOpacity: 1.0;
+    callback clicked;
+
+    width: emphasized ? 32px : 28px;
+    height: emphasized ? 32px : 28px;
+    border-radius: emphasized ? 16px : 14px;
+    background: emphasized ? #5d92f6 : #243547;
+    opacity: enabled ? 1 : 0.35;
+
+    Text {
+        x: 0;
+        y: parent.height / 2 - self.height / 2;
+        width: parent.width;
+        text: label;
+        color: #f6f8fb;
+        font-size: emphasized ? 13px : 12px;
+        font-weight: 700;
+        horizontal-alignment: center;
+        opacity: glyphOpacity;
+    }
+
+    TouchArea {
+        enabled: parent.enabled;
+        clicked => {
+            root.clicked();
+        }
+    }
+}
+
+component SettingsNavItem inherits Rectangle {
+    in property <image> iconSource;
+    in property <string> titleText;
+    in property <bool> active: false;
+    in property <bool> compact: false;
+    callback clicked;
+
+    width: compact ? 42px : 210px;
+    height: compact ? 42px : 42px;
+    border-radius: compact ? 7px : 8px;
+    background: active ? #2d302d : #00000000;
+    border-width: compact && active ? 1px : 0px;
+    border-color: compact && active ? #bfc5bf : #00000000;
+
+    Image {
+        x: compact ? parent.width / 2 - 7px : 16px;
+        y: parent.height / 2 - 7px;
+        width: 14px;
+        height: 14px;
+        source: iconSource;
+        opacity: active ? 1 : 0.92;
+    }
+
+    Text {
+        visible: !compact;
+        x: 48px;
+        y: parent.height / 2 - self.height / 2;
+        width: parent.width - 64px;
+        text: titleText;
+        color: active ? #f6f8fb : #d2d6d2;
+        font-size: 14px;
+        font-weight: active ? 600 : 500;
+    }
+
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+}
+
+component SettingsToggleCard inherits Rectangle {
+    in property <string> iconText: "";
+    in property <string> title;
+    in property <string> subtitle;
+    in property <string> badgeText: "";
+    in property <bool> badgeSuccess: false;
+    in property <bool> value: false;
+    callback toggled;
+
+    width: 624px;
+    height: 82px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #323532;
+    background: #2b2d2b;
+
+    Text {
+        x: 18px;
+        y: parent.height / 2 - self.height / 2;
+        width: 28px;
+        text: iconText;
+        color: #f1f3f0;
+        font-size: 24px;
+        font-family: "Segoe Fluent Icons";
+        horizontal-alignment: center;
+    }
+
+    Text {
+        x: 64px;
+        y: 18px;
+        text: title;
+        color: #f2f4f1;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    Rectangle {
+        visible: badgeText != "";
+        x: 250px;
+        y: 18px;
+        width: badgeText == "PREMIUM" ? 58px : 40px;
+        height: 20px;
+        border-radius: 6px;
+        background: badgeSuccess ? #6fd44e : #4d504d;
+
+        Text {
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: badgeText;
+            color: badgeSuccess ? #173010 : #eceeeb;
+            font-size: 9px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+    }
+
+    Text {
+        x: 64px;
+        y: 42px;
+        width: parent.width - 176px;
+        text: subtitle;
+        color: #b0b4b0;
+        font-size: 12px;
+        wrap: word-wrap;
+        max-height: 28px;
+    }
+
+    Rectangle {
+        x: parent.width - 64px;
+        y: 27px;
+        width: 48px;
+        height: 28px;
+        border-radius: 14px;
+        border-width: value ? 0px : 1px;
+        border-color: #d7dbd6;
+        background: value ? #727572 : #00000000;
+
+        Rectangle {
+            x: value ? 24px : 2px;
+            y: 2px;
+            width: 22px;
+            height: 24px;
+            border-radius: 11px;
+            background: value ? #101111 : #ffffff;
+        }
+
+        TouchArea {
+            clicked => {
+                root.toggled();
+            }
+        }
+    }
+}
+
+component SettingsStepperCard inherits Rectangle {
+    in property <string> iconText: "";
+    in property <string> title;
+    in property <string> subtitle;
+    in property <string> badgeText: "";
+    in property <bool> badgeSuccess: false;
+    in property <string> unitText: "";
+    in property <int> value;
+    callback decrement;
+    callback increment;
+
+    width: 624px;
+    height: 82px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #323532;
+    background: #2b2d2b;
+
+    Text {
+        x: 18px;
+        y: parent.height / 2 - self.height / 2;
+        width: 28px;
+        text: iconText;
+        color: #f1f3f0;
+        font-size: 24px;
+        font-family: "Segoe Fluent Icons";
+        horizontal-alignment: center;
+    }
+
+    Text {
+        x: 64px;
+        y: 18px;
+        text: title;
+        color: #f2f4f1;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    Rectangle {
+        visible: badgeText != "";
+        x: 250px;
+        y: 18px;
+        width: badgeText == "PREMIUM" ? 58px : 40px;
+        height: 20px;
+        border-radius: 6px;
+        background: badgeSuccess ? #6fd44e : #4d504d;
+
+        Text {
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: badgeText;
+            color: badgeSuccess ? #173010 : #eceeeb;
+            font-size: 9px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+    }
+
+    Text {
+        x: 64px;
+        y: 42px;
+        width: parent.width - 240px;
+        text: subtitle;
+        color: #b0b4b0;
+        font-size: 12px;
+        wrap: word-wrap;
+        max-height: 28px;
+    }
+
+    ControlChip {
+        x: parent.width - 158px;
+        y: 26px;
+        label: "-";
+        emphasized: false;
+        clicked => {
+            root.decrement();
+        }
+    }
+
+    Rectangle {
+        x: parent.width - 122px;
+        y: 18px;
+        width: unitText == "" ? 68px : 76px;
+        height: 40px;
+        border-radius: 8px;
+        border-width: 1px;
+        border-color: #4a4d4a;
+        background: #343634;
+
+        Text {
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: value;
+            color: #f1f3f0;
+            font-size: 13px;
+            font-weight: 600;
+            horizontal-alignment: center;
+        }
+    }
+
+    Text {
+        visible: unitText != "";
+        x: parent.width - 38px;
+        y: 28px;
+        text: unitText;
+        color: #f1f3f0;
+        font-size: 12px;
+    }
+
+    ControlChip {
+        x: parent.width - 48px - (unitText != "" ? 30px : 0px);
+        y: 26px;
+        label: "+";
+        clicked => {
+            root.increment();
+        }
+    }
+}
+
+component SettingsInfoBar inherits Rectangle {
+    in property <string> text;
+    in property <bool> warning: false;
+    in property <bool> informational: false;
+
+    width: 624px;
+    height: 40px;
+    border-radius: 6px;
+    background: warning ? #6b5115 : (informational ? #323532 : #2b2d2b);
+
+    Text {
+        x: 16px;
+        y: parent.height / 2 - self.height / 2;
+        width: 20px;
+        text: warning ? "!" : "i";
+        color: warning ? #ffdd5c : #8d9190;
+        font-size: 18px;
+        font-family: "Segoe Fluent Icons";
+        horizontal-alignment: center;
+    }
+
+    Text {
+        x: 44px;
+        y: parent.height / 2 - self.height / 2;
+        width: parent.width - 60px;
+        text: text;
+        color: #f1f3f0;
+        font-size: 13px;
+        font-weight: 600;
+        wrap: word-wrap;
+    }
+}
+
+component SettingsSelectCard inherits Rectangle {
+    in property <string> iconText: "";
+    in property <string> title;
+    in property <string> subtitle: "";
+    in property <string> badgeText: "";
+    in property <bool> badgeSuccess: false;
+    in property <string> valueText;
+    callback activated;
+
+    width: 624px;
+    height: 82px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #323532;
+    background: #2b2d2b;
+
+    Text {
+        x: 18px;
+        y: parent.height / 2 - self.height / 2;
+        width: 28px;
+        text: iconText;
+        color: #f1f3f0;
+        font-size: 24px;
+        font-family: "Segoe Fluent Icons";
+        horizontal-alignment: center;
+    }
+
+    Text {
+        x: 64px;
+        y: subtitle == "" ? 29px : 18px;
+        text: title;
+        color: #f2f4f1;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    Rectangle {
+        visible: badgeText != "";
+        x: 250px;
+        y: 18px;
+        width: badgeText == "PREMIUM" ? 58px : 40px;
+        height: 20px;
+        border-radius: 6px;
+        background: badgeSuccess ? #6fd44e : #4d504d;
+
+        Text {
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: badgeText;
+            color: badgeSuccess ? #173010 : #eceeeb;
+            font-size: 9px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+    }
+
+    Text {
+        visible: subtitle != "";
+        x: 64px;
+        y: 42px;
+        width: parent.width - 220px;
+        text: subtitle;
+        color: #b0b4b0;
+        font-size: 12px;
+        wrap: word-wrap;
+        max-height: 28px;
+    }
+
+    Rectangle {
+        x: parent.width - 148px;
+        y: 20px;
+        width: 132px;
+        height: 40px;
+        border-radius: 6px;
+        border-width: 1px;
+        border-color: #434643;
+        background: #343634;
+
+        Text {
+            x: 14px;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width - 34px;
+            text: valueText;
+            color: #f1f3f0;
+            font-size: 12px;
+        }
+
+        Text {
+            x: parent.width - 24px;
+            y: parent.height / 2 - self.height / 2;
+            text: "";
+            color: #f1f3f0;
+            font-size: 12px;
+            font-family: "Segoe Fluent Icons";
+        }
+
+        TouchArea {
+            clicked => {
+                root.activated();
+            }
+        }
+    }
+}
+
+component SettingsHeroBlock inherits Rectangle {
+    in property <string> description;
+    in property <image> previewImage;
+
+    width: 624px;
+    height: 112px;
+    background: #00000000;
+
+    Rectangle {
+        x: 0;
+        y: 6px;
+        width: 164px;
+        height: 98px;
+        border-radius: 6px;
+        clip: true;
+        background: #303332;
+
+        Image {
+            x: 0;
+            y: 0;
+            width: parent.width;
+            height: parent.height;
+            source: previewImage;
+            image-fit: cover;
+        }
+    }
+
+    Text {
+        x: 176px;
+        y: 8px;
+        width: 428px;
+        text: description;
+        color: #d1d5d1;
+        font-size: 14px;
+        wrap: word-wrap;
+    }
+}
+
+component AboutLicenseCard inherits Rectangle {
+    in property <string> name;
+    in property <string> version;
+    in property <string> licenseText;
+
+    width: 624px;
+    height: 80px;
+    border-radius: 6px;
+    border-width: 1px;
+    border-color: #323532;
+    background: #2b2d2b;
+
+    Text {
+        x: 18px;
+        y: 18px;
+        text: name;
+        color: #f1f3f0;
+        font-size: 14px;
+        font-weight: 700;
+    }
+
+    Text {
+        x: 250px;
+        y: 20px;
+        text: version;
+        color: #a9ada9;
+        font-size: 12px;
+    }
+
+    Text {
+        x: 18px;
+        y: 46px;
+        text: licenseText;
+        color: #efefef;
+        font-size: 12px;
+    }
+}
+
+component DashboardActionCard inherits Rectangle {
+    in property <image> iconSource;
+    in property <string> title;
+    in property <string> subtitle;
+    in property <bool> premium: false;
+    callback clicked;
+
+    width: 302px;
+    height: 94px;
+    border-radius: 8px;
+    border-width: 1px;
+    border-color: #353835;
+    background: #2d2f2d;
+
+    Image {
+        x: 18px;
+        y: parent.height / 2 - 14px;
+        width: 28px;
+        height: 28px;
+        source: iconSource;
+    }
+
+    Text {
+        x: 64px;
+        y: 24px;
+        text: title;
+        color: #f1f3f0;
+        font-size: 14px;
+        font-weight: 600;
+    }
+
+    Rectangle {
+        visible: premium;
+        x: parent.width - 88px;
+        y: 23px;
+        width: 62px;
+        height: 18px;
+        border-radius: 9px;
+        background: #505350;
+
+        Text {
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: "PREMIUM";
+            color: #dfdfdf;
+            font-size: 8px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+    }
+
+    Text {
+        x: 64px;
+        y: 52px;
+        text: subtitle;
+        color: #b4b8b5;
+        font-size: 12px;
+    }
+
+    Image {
+        x: parent.width - 24px;
+        y: parent.height / 2 - 8px;
+        width: 16px;
+        height: 16px;
+        source: @image-url("icons/chevron-right.svg");
+    }
+
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+}
+
+component FooterLinkCard inherits Rectangle {
+    in property <image> iconSource;
+    in property <string> label;
+    callback clicked;
+
+    width: 120px;
+    height: 56px;
+    border-radius: 6px;
+    background: #00000000;
+
+    Image {
+        x: parent.width / 2 - 9px;
+        y: 6px;
+        width: 18px;
+        height: 18px;
+        source: iconSource;
+    }
+
+    Text {
+        x: 0;
+        y: 30px;
+        width: parent.width;
+        text: label;
+        color: #f5f8fc;
+        font-size: 11px;
+        horizontal-alignment: center;
+    }
+
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+}
+
+component MediaFlyoutPreview inherits Rectangle {
+    in property <bool> compactLayout: false;
+    in property <bool> repeatEnabled: true;
+    in property <bool> shuffleEnabled: true;
+    in property <bool> playerInfoEnabled: true;
+    in property <bool> centerTitleArtist: false;
+    in property <bool> seekbarEnabled: true;
+    in property <bool> mediaSessionSupportsSeekbar: true;
+    in property <bool> mediaFlyoutAlwaysDisplay: false;
+    in property <int> backgroundBlurStyle: 2;
+    in property <string> playPauseLabel: "II";
+    in property <string> repeatLabel: "R";
+    in property <bool> repeatActive: false;
+    in property <bool> repeatAvailable: true;
+    in property <bool> shuffleActive: false;
+    in property <bool> shuffleAvailable: true;
+    in property <string> titleText: "Glass Arcade";
+    in property <string> artistText: "Lumen Avenue";
+    in property <string> playerText: "Spotify";
+    in property <string> currentDurationText: "1:12";
+    in property <string> maxDurationText: "3:08";
+    in property <image> albumArt;
+    in property <bool> hasAlbumArt: false;
+    in-out property <float> seekbarValue: 0;
+    in property <float> seekbarMaximum: 100;
+    callback previousRequested;
+    callback playPauseRequested;
+    callback nextRequested;
+    callback repeatRequested;
+    callback shuffleRequested;
+    callback closeRequested;
+    callback seekbarReleased(float);
+
+    private property <length> extraWidth:
+        (repeatEnabled ? 36px : 0px) +
+        (shuffleEnabled ? 36px : 0px) +
+        72px;
+    private property <length> extraHeight:
+        seekbarEnabled && mediaSessionSupportsSeekbar ? 36px : 0px;
+    private property <length> controlsWidth:
+        compactLayout
+            ? (mediaFlyoutAlwaysDisplay ? 148px : 104px)
+            : 112px + extraWidth;
+    private property <length> artX: compactLayout ? 12px : 18px;
+    private property <length> artY: compactLayout ? 12px : 18px;
+    private property <length> artHeight: compactLayout ? 36px : 78px;
+    private property <length> infoX: compactLayout ? 98px : 108px;
+    private property <length> infoY: compactLayout ? 12px : 18px;
+    private property <length> infoWidth:
+        compactLayout
+            ? 182px - (mediaFlyoutAlwaysDisplay ? 36px : 0px)
+            : 110px + extraWidth;
+    private property <length> controlsX:
+        compactLayout ? self.width - 12px - controlsWidth : 108px;
+    private property <length> controlsY: compactLayout ? 14px : 58px;
+    private property <length> seekbarY:
+        compactLayout ? 66px : 118px;
+
+    width: compactLayout ? 400px : 238px + extraWidth;
+    height: (compactLayout ? 60px : 112px) + extraHeight;
+    border-radius: 22px;
+    border-width: 1px;
+    border-color: #223246;
+    background: #121923;
+    clip: true;
+
+    Rectangle {
+        visible: backgroundBlurStyle == 1;
+        x: -34px;
+        y: -18px;
+        width: 170px;
+        height: 170px;
+        border-radius: 85px;
+        background: #4a80ba44;
+    }
+
+    Rectangle {
+        visible: backgroundBlurStyle == 2;
+        x: -56px;
+        y: -34px;
+        width: 224px;
+        height: 224px;
+        border-radius: 112px;
+        background: #5d8eca36;
+    }
+
+    Rectangle {
+        visible: backgroundBlurStyle == 3;
+        x: -30px;
+        y: 14px;
+        width: parent.width + 60px;
+        height: parent.height;
+        border-radius: 28px;
+        background: #88a4c216;
+    }
+
+    Rectangle {
+        x: artX;
+        y: artY;
+        width: 78px;
+        height: artHeight;
+        border-radius: 6px;
+        border-width: 1px;
+        border-color: #26ffffff;
+        background: #213246;
+        clip: true;
+
+        Rectangle {
+            x: -12px;
+            y: -12px;
+            width: 102px;
+            height: 102px;
+            border-radius: 18px;
+            background: #355275;
+        }
+
+        Image {
+            visible: hasAlbumArt;
+            x: 0;
+            y: 0;
+            width: parent.width;
+            height: parent.height;
+            source: albumArt;
+            image-fit: cover;
+        }
+
+        Text {
+            visible: !hasAlbumArt;
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: "ART";
+            color: #f0f6fd;
+            font-size: 12px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+    }
+
+    Rectangle {
+        visible: !compactLayout && mediaFlyoutAlwaysDisplay;
+        x: self.width - 36px;
+        y: 8px;
+        width: 28px;
+        height: 28px;
+        border-radius: 14px;
+        background: #203142;
+
+        Text {
+            x: 0;
+            y: parent.height / 2 - self.height / 2;
+            width: parent.width;
+            text: "x";
+            color: #f6f8fb;
+            font-size: 12px;
+            font-weight: 700;
+            horizontal-alignment: center;
+        }
+
+        TouchArea {
+            clicked => {
+                root.closeRequested();
+            }
+        }
+    }
+
+    Rectangle {
+        x: infoX;
+        y: infoY;
+        width: infoWidth;
+        height: compactLayout ? 36px : 36px;
+        background: #00000000;
+
+        Text {
+            x: 0;
+            y: 0;
+            width: parent.width;
+            text: titleText;
+            color: #f6f8fb;
+            font-size: 14px;
+            font-weight: 600;
+            horizontal-alignment: centerTitleArtist ? center : left;
+        }
+
+        Text {
+            x: 0;
+            y: 19px;
+            width: parent.width;
+            text: artistText;
+            color: #f6f8fb;
+            font-size: 14px;
+            font-weight: 600;
+            opacity: 0.5;
+            horizontal-alignment: centerTitleArtist ? center : left;
+        }
+    }
+
+    Rectangle {
+        x: controlsX;
+        y: controlsY;
+        width: controlsWidth;
+        height: 36px;
+        background: #00000000;
+
+        ControlChip {
+            x: 2px;
+            y: 4px;
+            label: "<<";
+            enabled: true;
+            clicked => {
+                root.previousRequested();
+            }
+        }
+
+        ControlChip {
+            x: 38px;
+            y: 2px;
+            label: playPauseLabel;
+            emphasized: true;
+            enabled: true;
+            clicked => {
+                root.playPauseRequested();
+            }
+        }
+
+        ControlChip {
+            x: 78px;
+            y: 4px;
+            label: ">>";
+            enabled: true;
+            clicked => {
+                root.nextRequested();
+            }
+        }
+
+        ControlChip {
+            visible: compactLayout && mediaFlyoutAlwaysDisplay;
+            x: 114px;
+            y: 4px;
+            label: "x";
+            enabled: true;
+            clicked => {
+                root.closeRequested();
+            }
+        }
+
+        ControlChip {
+            visible: !compactLayout && repeatEnabled;
+            x: 112px;
+            y: 4px;
+            label: repeatLabel;
+            enabled: repeatAvailable;
+            glyphOpacity: repeatActive ? 1 : 0.5;
+            clicked => {
+                root.repeatRequested();
+            }
+        }
+
+        ControlChip {
+            visible: !compactLayout && shuffleEnabled;
+            x: 112px + (repeatEnabled ? 36px : 0px);
+            y: 4px;
+            label: "S";
+            enabled: shuffleAvailable;
+            glyphOpacity: shuffleActive ? 1 : 0.5;
+            clicked => {
+                root.shuffleRequested();
+            }
+        }
+
+        Rectangle {
+            visible: !compactLayout && playerInfoEnabled;
+            x: 112px + (repeatEnabled ? 36px : 0px) + (shuffleEnabled ? 36px : 0px);
+            y: 7px;
+            width: 72px;
+            height: 20px;
+            background: #00000000;
+
+            Rectangle {
+                x: 0;
+                y: 3px;
+                width: 14px;
+                height: 14px;
+                border-radius: 7px;
+                background: #8db6ff;
+            }
+
+            Text {
+                x: 20px;
+                y: 0;
+                width: 50px;
+                text: playerText;
+                color: #f6f8fb;
+                font-size: 10px;
+                opacity: 0.25;
+            }
+        }
+    }
+
+    Rectangle {
+        visible: seekbarEnabled && mediaSessionSupportsSeekbar;
+        x: 16px;
+        y: seekbarY;
+        width: parent.width - 32px;
+        height: 18px;
+        background: #00000000;
+
+        Text {
+            x: 0;
+            y: 1px;
+            width: 45px;
+            text: currentDurationText;
+            color: #f6f8fb;
+            font-size: 12px;
+            opacity: 0.5;
+        }
+
+        Text {
+            x: parent.width - 45px;
+            y: 1px;
+            width: 45px;
+            text: maxDurationText;
+            color: #f6f8fb;
+            font-size: 12px;
+            opacity: 0.5;
+            horizontal-alignment: right;
+        }
+
+        Slider {
+            x: 47px;
+            y: 1px;
+            width: parent.width - 94px;
+            height: 16px;
+            minimum: 0;
+            maximum: seekbarMaximum;
+            value: seekbarValue;
+            changed(value) => {
+                root.seekbarValue = value;
+            }
+            released(value) => {
+                root.seekbarReleased(value);
+            }
+        }
+    }
+}
+
+export component AppWindow inherits Window {
+    in property <bool> normalCompactLayout: false;
+    in property <bool> normalCenterTitleArtist: false;
+    in property <string> normalPlayPauseLabel: "II";
+    in property <string> normalRepeatLabel: "R";
+    in property <bool> normalRepeatActive: false;
+    in property <bool> normalRepeatAvailable: true;
+    in property <bool> normalShuffleActive: false;
+    in property <bool> normalShuffleAvailable: true;
+    in property <string> normalTitle: "Glass Arcade";
+    in property <string> normalArtist: "Lumen Avenue";
+    in property <string> normalPlayer: "Spotify";
+    in property <string> normalCurrentDuration: "1:12";
+    in property <string> normalMaxDuration: "3:08";
+    in property <image> normalAlbumArt;
+    in property <bool> normalHasAlbumArt: false;
+    in-out property <float> normalSeekbarValue: 0;
+    in property <float> normalSeekbarMaximum: 100;
+    in property <bool> normalRepeatEnabled: true;
+    in property <bool> normalShuffleEnabled: true;
+    in property <bool> normalPlayerInfoEnabled: true;
+    in property <bool> normalSeekbarEnabled: true;
+    in property <bool> normalMediaSessionSupportsSeekbar: true;
+    in property <bool> normalAlwaysDisplay: false;
+    in property <int> normalBackgroundBlurStyle: 2;
+
+    in property <string> compactTitle: "Signal Bloom";
+    in property <string> compactArtist: "North Harbor";
+    in property <string> compactPlayer: "TIDAL";
+    in property <string> compactCurrentDuration: "0:48";
+    in property <string> compactMaxDuration: "4:21";
+    in property <image> compactAlbumArt;
+    in property <bool> compactHasAlbumArt: false;
+    in-out property <float> compactSeekbarValue: 0;
+    in property <float> compactSeekbarMaximum: 100;
+    in property <string> compactPlayPauseLabel: "II";
+    in property <string> compactRepeatLabel: "R";
+    in property <bool> compactRepeatActive: false;
+    in property <bool> compactRepeatAvailable: true;
+    in property <bool> compactShuffleActive: false;
+    in property <bool> compactShuffleAvailable: true;
+    in property <bool> compactCompactLayout: true;
+    in property <bool> compactAlwaysDisplay: true;
+    in property <int> compactBackgroundBlurStyle: 1;
+    in property <string> settingsPath: "";
+    in property <string> settingsStatus: "";
+    in property <string> settingsSummary: "";
+    callback normalPreviousRequested;
+    callback normalPlayPauseRequested;
+    callback normalNextRequested;
+    callback normalRepeatRequested;
+    callback normalShuffleRequested;
+    callback normalCloseRequested;
+    callback normalSeekbarReleased(float);
+
+    width: 1120px;
+    height: 760px;
+    title: "FluentFlyout Preview Dashboard";
+    background: #0b1015;
+
+    Rectangle {
+        x: 26px;
+        y: 26px;
+        width: parent.width - 52px;
+        height: parent.height - 52px;
+        border-radius: 28px;
+        background: #10161d;
+        border-width: 1px;
+        border-color: #1b2632;
+
+        Text {
+            x: 34px;
+            y: 28px;
+            text: "Media Flyout Preview";
+            color: #f5f8fc;
+            font-size: 30px;
+            font-weight: 700;
+        }
+
+        Text {
+            x: 34px;
+            y: 70px;
+            width: 720px;
+            text: "This developer-only dashboard maps the current WPF MainWindow geometry into Slint. Use it to compare layout behavior while the real app runs through the tray, settings window, and live flyout.";
+            color: #9fb0bf;
+            font-size: 14px;
+            wrap: word-wrap;
+        }
+
+        Text {
+            x: 34px;
+            y: 132px;
+            text: "Current Settings Preview";
+            color: #dfe8f0;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        MediaFlyoutPreview {
+            x: 34px;
+            y: 164px;
+            compactLayout: root.normalCompactLayout;
+            repeatEnabled: root.normalRepeatEnabled;
+            shuffleEnabled: root.normalShuffleEnabled;
+            playerInfoEnabled: root.normalPlayerInfoEnabled;
+            centerTitleArtist: root.normalCenterTitleArtist;
+            seekbarEnabled: root.normalSeekbarEnabled;
+            mediaSessionSupportsSeekbar: root.normalMediaSessionSupportsSeekbar;
+            mediaFlyoutAlwaysDisplay: root.normalAlwaysDisplay;
+            backgroundBlurStyle: root.normalBackgroundBlurStyle;
+            playPauseLabel: root.normalPlayPauseLabel;
+            repeatLabel: root.normalRepeatLabel;
+            repeatActive: root.normalRepeatActive;
+            repeatAvailable: root.normalRepeatAvailable;
+            shuffleActive: root.normalShuffleActive;
+            shuffleAvailable: root.normalShuffleAvailable;
+            titleText: root.normalTitle;
+            artistText: root.normalArtist;
+            playerText: root.normalPlayer;
+            currentDurationText: root.normalCurrentDuration;
+            maxDurationText: root.normalMaxDuration;
+            albumArt: root.normalAlbumArt;
+            hasAlbumArt: root.normalHasAlbumArt;
+            seekbarValue: root.normalSeekbarValue;
+            seekbarMaximum: root.normalSeekbarMaximum;
+            previousRequested => {
+                root.normalPreviousRequested();
+            }
+            playPauseRequested => {
+                root.normalPlayPauseRequested();
+            }
+            nextRequested => {
+                root.normalNextRequested();
+            }
+            repeatRequested => {
+                root.normalRepeatRequested();
+            }
+            shuffleRequested => {
+                root.normalShuffleRequested();
+            }
+            closeRequested => {
+                root.normalCloseRequested();
+            }
+            seekbarReleased(value) => {
+                root.normalSeekbarReleased(value);
+            }
+        }
+
+        Text {
+            x: 34px;
+            y: 322px;
+            width: 420px;
+            text: "This preview is driven by the Rust-loaded settings file, so compact mode, seekbar visibility, repeat, shuffle, blur preset, and player info follow the current XML values.";
+            color: #8ca0b0;
+            font-size: 13px;
+            wrap: word-wrap;
+        }
+
+        Text {
+            x: 34px;
+            y: 398px;
+            text: "Alternate Layout Preview";
+            color: #dfe8f0;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        MediaFlyoutPreview {
+            x: 34px;
+            y: 430px;
+            compactLayout: root.compactCompactLayout;
+            repeatEnabled: true;
+            shuffleEnabled: true;
+            playerInfoEnabled: true;
+            centerTitleArtist: false;
+            seekbarEnabled: true;
+            mediaSessionSupportsSeekbar: true;
+            mediaFlyoutAlwaysDisplay: root.compactAlwaysDisplay;
+            backgroundBlurStyle: root.compactBackgroundBlurStyle;
+            playPauseLabel: root.compactPlayPauseLabel;
+            repeatLabel: root.compactRepeatLabel;
+            repeatActive: root.compactRepeatActive;
+            repeatAvailable: root.compactRepeatAvailable;
+            shuffleActive: root.compactShuffleActive;
+            shuffleAvailable: root.compactShuffleAvailable;
+            titleText: root.compactTitle;
+            artistText: root.compactArtist;
+            playerText: root.compactPlayer;
+            currentDurationText: root.compactCurrentDuration;
+            maxDurationText: root.compactMaxDuration;
+            albumArt: root.compactAlbumArt;
+            hasAlbumArt: root.compactHasAlbumArt;
+            seekbarValue: root.compactSeekbarValue;
+            seekbarMaximum: root.compactSeekbarMaximum;
+        }
+
+        Text {
+            x: 34px;
+            y: 546px;
+            width: 420px;
+            text: "Mapped from WPF: fixed width 400 in compact mode, 60 base height, artwork height reduced to 36, close button moved into the control row when always visible.";
+            color: #8ca0b0;
+            font-size: 13px;
+            wrap: word-wrap;
+        }
+
+        Rectangle {
+            x: 530px;
+            y: 164px;
+            width: parent.width - 564px;
+            height: 466px;
+            border-radius: 22px;
+            background: #121923;
+            border-width: 1px;
+            border-color: #223246;
+
+            Text {
+                x: 24px;
+                y: 24px;
+                text: "Loaded Settings + Port Rules";
+                color: #f4f7fb;
+                font-size: 18px;
+                font-weight: 600;
+            }
+
+            Text {
+                x: 24px;
+                y: 62px;
+                width: parent.width - 48px;
+                text: root.settingsStatus;
+                color: #8ec0ff;
+                font-size: 13px;
+                wrap: word-wrap;
+            }
+
+            Text {
+                x: 24px;
+                y: 92px;
+                width: parent.width - 48px;
+                text: root.settingsPath;
+                color: #70859a;
+                font-size: 12px;
+                wrap: word-wrap;
+            }
+
+            Text {
+                x: 24px;
+                y: 126px;
+                width: parent.width - 48px;
+                text: root.settingsSummary;
+                color: #d4e0ea;
+                font-size: 13px;
+                wrap: word-wrap;
+            }
+
+            for line[index] in [
+                "Window size changes with repeat, shuffle, and seekbar support.",
+                "Compact mode uses a horizontal body layout and 400px width.",
+                "Player info stays as a 72px segment in normal mode.",
+                "Always-display moves the close button into the compact control row.",
+                "Blur style is represented as three separate background treatments.",
+                "Seekbar row only appears when both setting and media support are true."
+            ] : Text {
+                x: 24px;
+                y: 190px + index * 44px;
+                width: parent.width - 48px;
+                text: line;
+                color: #b7c4d0;
+                font-size: 14px;
+                wrap: word-wrap;
+            }
+        }
+
+        Rectangle {
+            x: 530px;
+            y: 572px;
+            width: parent.width - 564px;
+            height: 110px;
+            border-radius: 18px;
+            background: #16202b;
+            border-width: 1px;
+            border-color: #2a3d52;
+
+            Text {
+                x: 22px;
+                y: 20px;
+                width: parent.width - 44px;
+                text: "Developer note: this dashboard stays available for visual parity checks, but it is no longer the default startup window.";
+                color: #dfe9f3;
+                font-size: 14px;
+                wrap: word-wrap;
+            }
+        }
+    }
+}
+
+export component LiveFlyoutWindow inherits Window {
+    in property <bool> compactLayout: false;
+    in property <bool> centerTitleArtist: false;
+    in property <string> playPauseLabel: "II";
+    in property <string> repeatLabel: "R";
+    in property <bool> repeatActive: false;
+    in property <bool> repeatAvailable: true;
+    in property <bool> shuffleActive: false;
+    in property <bool> shuffleAvailable: true;
+    in property <string> titleText: "Glass Arcade";
+    in property <string> artistText: "Lumen Avenue";
+    in property <string> playerText: "Spotify";
+    in property <string> currentDurationText: "1:12";
+    in property <string> maxDurationText: "3:08";
+    in property <image> albumArt;
+    in property <bool> hasAlbumArt: false;
+    in-out property <float> seekbarValue: 0;
+    in property <float> seekbarMaximum: 100;
+    in property <bool> repeatEnabled: false;
+    in property <bool> shuffleEnabled: false;
+    in property <bool> playerInfoEnabled: true;
+    in property <bool> seekbarEnabled: true;
+    in property <bool> mediaSessionSupportsSeekbar: true;
+    in property <bool> mediaFlyoutAlwaysDisplay: false;
+    in property <int> backgroundBlurStyle: 0;
+    callback previousRequested;
+    callback playPauseRequested;
+    callback nextRequested;
+    callback repeatRequested;
+    callback shuffleRequested;
+    callback closeRequested;
+    callback seekbarReleased(float);
+
+    title: "FluentFlyout Live Flyout";
+    background: #00000000;
+    no-frame: true;
+    always-on-top: true;
+    width: flyout.width;
+    height: flyout.height;
+
+    flyout := MediaFlyoutPreview {
+        compactLayout: root.compactLayout;
+        centerTitleArtist: root.centerTitleArtist;
+        playPauseLabel: root.playPauseLabel;
+        titleText: root.titleText;
+        artistText: root.artistText;
+        playerText: root.playerText;
+        currentDurationText: root.currentDurationText;
+        maxDurationText: root.maxDurationText;
+        albumArt: root.albumArt;
+        hasAlbumArt: root.hasAlbumArt;
+        seekbarValue: root.seekbarValue;
+        seekbarMaximum: root.seekbarMaximum;
+        repeatEnabled: root.repeatEnabled;
+        shuffleEnabled: root.shuffleEnabled;
+        playerInfoEnabled: root.playerInfoEnabled;
+        seekbarEnabled: root.seekbarEnabled;
+        mediaSessionSupportsSeekbar: root.mediaSessionSupportsSeekbar;
+        mediaFlyoutAlwaysDisplay: root.mediaFlyoutAlwaysDisplay;
+        backgroundBlurStyle: root.backgroundBlurStyle;
+        repeatLabel: root.repeatLabel;
+        repeatActive: root.repeatActive;
+        repeatAvailable: root.repeatAvailable;
+        shuffleActive: root.shuffleActive;
+        shuffleAvailable: root.shuffleAvailable;
+        previousRequested => {
+            root.previousRequested();
+        }
+        playPauseRequested => {
+            root.playPauseRequested();
+        }
+        nextRequested => {
+            root.nextRequested();
+        }
+        repeatRequested => {
+            root.repeatRequested();
+        }
+        shuffleRequested => {
+            root.shuffleRequested();
+        }
+        closeRequested => {
+            root.closeRequested();
+        }
+        seekbarReleased(value) => {
+            root.seekbarReleased(value);
+        }
+    }
+}
+
+component TaskbarWidgetButton inherits Rectangle {
+    in property <string> label;
+    callback clicked;
+
+    width: 24px;
+    height: 28px;
+    border-radius: 6px;
+    background: #00000000;
+
+    Text {
+        x: 0;
+        y: parent.height / 2 - self.height / 2;
+        width: parent.width;
+        text: label;
+        color: #f4f6f3;
+        font-size: 13px;
+        font-weight: 700;
+        horizontal-alignment: center;
+    }
+
+    TouchArea {
+        clicked => {
+            root.clicked();
+        }
+    }
+}
+
+export component TaskbarWidgetWindow inherits Window {
+    in property <string> playPauseLabel: ">";
+    in property <string> titleText: "No media playing";
+    in property <string> artistText: "";
+    in property <string> playerText: "Idle";
+    in property <image> albumArt;
+    in property <bool> hasAlbumArt: false;
+    in property <bool> hasMedia: false;
+    in property <bool> isPlaying: false;
+    in property <bool> controlsEnabled: true;
+    in property <int> controlsPosition: 1;
+    in property <bool> backgroundBlur: false;
+    callback previousRequested;
+    callback playPauseRequested;
+    callback nextRequested;
+    callback widgetClicked;
+
+    private property <length> controlsWidth: controlsEnabled ? 78px : 0px;
+    private property <length> iconX: controlsEnabled && controlsPosition == 0 ? 88px : 6px;
+    private property <length> textX: iconX + 40px;
+    private property <length> textWidth: root.width - textX - (controlsEnabled && controlsPosition == 1 ? 88px : 8px);
+
+    title: "FluentFlyout Taskbar Widget";
+    background: #00000000;
+    no-frame: true;
+    always-on-top: true;
+    width: controlsEnabled ? 220px : 150px;
+    height: 40px;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        border-radius: 6px;
+        border-width: 1px;
+        border-color: #3a3d3a;
+        background: #262926;
+        clip: true;
+
+        Rectangle {
+            visible: backgroundBlur;
+            x: -34px;
+            y: -40px;
+            width: 112px;
+            height: 112px;
+            border-radius: 56px;
+            background: #ffffff12;
+        }
+
+        TouchArea {
+            clicked => {
+                root.widgetClicked();
+            }
+        }
+
+        Rectangle {
+            x: iconX;
+            y: 4px;
+            width: 32px;
+            height: 32px;
+            border-radius: 7px;
+            background: hasAlbumArt ? #00000000 : #303430;
+            clip: true;
+
+            Image {
+                visible: hasAlbumArt;
+                x: 0;
+                y: 0;
+                width: parent.width;
+                height: parent.height;
+                source: albumArt;
+                image-fit: cover;
+            }
+
+            Text {
+                visible: !hasAlbumArt;
+                x: 0;
+                y: parent.height / 2 - self.height / 2;
+                width: parent.width;
+                text: isPlaying ? "II" : ">";
+                color: #f4f6f3;
+                font-size: 14px;
+                font-weight: 800;
+                horizontal-alignment: center;
+            }
+        }
+
+        Text {
+            x: textX;
+            y: 6px;
+            width: textWidth;
+            text: titleText;
+            color: #f4f6f3;
+            font-size: 13px;
+            font-weight: 700;
+            overflow: elide;
+        }
+
+        Text {
+            x: textX;
+            y: 22px;
+            width: textWidth;
+            text: artistText != "" ? artistText : playerText;
+            color: #b5bab5;
+            font-size: 11px;
+            overflow: elide;
+        }
+
+        Rectangle {
+            visible: controlsEnabled;
+            x: controlsPosition == 0 ? 6px : parent.width - 82px;
+            y: 6px;
+            width: controlsWidth;
+            height: 28px;
+            background: #00000000;
+
+            TaskbarWidgetButton {
+                x: 0px;
+                label: "<<";
+                clicked => {
+                    root.previousRequested();
+                }
+            }
+
+            TaskbarWidgetButton {
+                x: 27px;
+                label: root.playPauseLabel;
+                clicked => {
+                    root.playPauseRequested();
+                }
+            }
+
+            TaskbarWidgetButton {
+                x: 54px;
+                label: ">>";
+                clicked => {
+                    root.nextRequested();
+                }
+            }
+        }
+    }
+}
+
+export component LockFlyoutWindow inherits Window {
+    in property <string> titleText: "Caps Lock On";
+    in property <bool> statusOn: true;
+    in property <bool> boldUi: false;
+
+    title: "FluentFlyout Lock Flyout";
+    background: #00000000;
+    no-frame: true;
+    always-on-top: true;
+    width: 160px;
+    height: 50px;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        border-radius: 16px;
+        border-width: 1px;
+        border-color: #263647;
+        background: #121923;
+
+        Rectangle {
+            x: 12px;
+            y: 8px;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            background: statusOn ? #5d92f6 : #2a3645;
+
+            Text {
+                x: 0;
+                y: parent.height / 2 - self.height / 2;
+                width: parent.width;
+                text: statusOn ? "L" : "U";
+                color: #f6f8fb;
+                font-size: 12px;
+                font-weight: 700;
+                horizontal-alignment: center;
+            }
+        }
+
+        Text {
+            x: 44px;
+            y: 6px;
+            width: parent.width - 56px;
+            text: titleText;
+            color: #f6f8fb;
+            font-size: 14px;
+            font-weight: boldUi ? 600 : 500;
+            vertical-alignment: center;
+        }
+
+        Rectangle {
+            x: parent.width / 2 - 30px;
+            y: parent.height - 8px;
+            width: 60px;
+            height: 4px;
+            border-radius: 2px;
+            background: statusOn ? #5d92f6 : #5d92f644;
+        }
+    }
+}
+
+export component SettingsWindow inherits Window {
+    in-out property <int> pageIndex: 0;
+    in property <string> settingsPath: "";
+    in property <string> saveStatus: "";
+
+    in-out property <bool> mediaFlyoutEnabled: true;
+    in-out property <int> mediaFlyoutBackgroundBlur: 0;
+    in-out property <bool> mediaFlyoutAcrylicWindowEnabled: true;
+    in-out property <bool> compactLayout: false;
+    in-out property <int> position: 0;
+    in-out property <int> durationMs: 3000;
+    in-out property <bool> mediaFlyoutAlwaysDisplay: false;
+    in-out property <bool> centerTitleArtist: false;
+    in-out property <bool> playerInfoEnabled: true;
+    in-out property <bool> repeatEnabled: false;
+    in-out property <bool> shuffleEnabled: false;
+    in-out property <bool> seekbarEnabled: false;
+    in-out property <bool> mediaFlyoutVolumeKeysExcluded: false;
+    in-out property <bool> exclusiveTidalMode: true;
+
+    in-out property <bool> lockKeysEnabled: true;
+    in-out property <bool> lockKeysAcrylicWindowEnabled: true;
+    in-out property <int> lockKeysDurationMs: 2000;
+    in-out property <bool> lockKeysBoldUi: false;
+    in-out property <int> lockKeysMonitorPreference: 0;
+    in-out property <bool> lockKeysInsertEnabled: true;
+
+    in-out property <int> flyoutSelectedMonitor: 0;
+    in-out property <bool> startup: true;
+    in-out property <bool> disableIfFullscreen: true;
+    in-out property <int> niconLeftClick: 0;
+    in-out property <bool> niconHide: false;
+    in-out property <int> appTheme: 0;
+    in-out property <bool> nextUpEnabled: true;
+    in-out property <int> nextUpDurationMs: 2000;
+    in-out property <bool> nextUpAcrylicWindowEnabled: true;
+    in-out property <bool> taskbarWidgetEnabled: true;
+    in-out property <int> taskbarWidgetSelectedMonitor: 0;
+    in-out property <int> taskbarWidgetPosition: 0;
+    in-out property <bool> taskbarWidgetPadding: true;
+    in-out property <int> taskbarWidgetManualPadding: 0;
+    in-out property <bool> taskbarWidgetClickable: true;
+    in-out property <bool> taskbarWidgetCloseableFlyout: true;
+    in-out property <bool> taskbarWidgetBackgroundBlur: false;
+    in-out property <bool> taskbarWidgetHideCompletely: false;
+    in-out property <bool> taskbarWidgetControlsEnabled: true;
+    in-out property <int> taskbarWidgetControlsPosition: 1;
+    in-out property <bool> taskbarWidgetAnimated: true;
+    in-out property <bool> taskbarVisualizerEnabled: false;
+    in-out property <int> taskbarVisualizerPosition: 2;
+    in-out property <int> taskbarVisualizerBarCount: 10;
+    in-out property <bool> taskbarVisualizerCenteredBars: false;
+    in-out property <bool> taskbarVisualizerBaseline: false;
+    in-out property <int> taskbarVisualizerAudioSensitivity: 2;
+    in-out property <int> taskbarVisualizerAudioPeakLevel: 3;
+    in-out property <bool> taskbarVisualizerClickable: false;
+    in-out property <int> acrylicBlurOpacity: 175;
+    in-out property <bool> useAlbumArtAsAccentColor: false;
+    in-out property <int> appLanguageIndex: 0;
+    in-out property <bool> niconSymbol: true;
+    in-out property <bool> showUpdateNotifications: true;
+
+    callback saveRequested;
+    callback closeRequested;
+
+    width: 900px;
+    height: 700px;
+    title: "FluentFlyout";
+    background: #202220;
+
+    Rectangle {
+        width: parent.width;
+        height: parent.height;
+        background: #202220;
+
+        Text {
+            x: 48px;
+            y: 42px;
+            text: "FluentFlyout Rust Settings";
+            color: #f4f6f3;
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        Text {
+            x: 48px;
+            y: 88px;
+            width: parent.width - 96px;
+            text: "Taskbar widget is now attached to the Windows taskbar using native HWND parenting. Use settings.xml for detailed options while the web settings UI is being wired.";
+            color: #b8bdb8;
+            font-size: 14px;
+            wrap: word-wrap;
+        }
+
+        Text {
+            x: 48px;
+            y: 148px;
+            text: "Taskbar widget: " + (root.taskbarWidgetEnabled ? "enabled" : "disabled");
+            color: #f4f6f3;
+            font-size: 16px;
+        }
+
+        Text {
+            x: 48px;
+            y: 180px;
+            text: "Position=" + root.taskbarWidgetPosition + ", monitor=" + root.taskbarWidgetSelectedMonitor + ", controls=" + (root.taskbarWidgetControlsEnabled ? "on" : "off");
+            color: #b8bdb8;
+            font-size: 13px;
+        }
+
+        Rectangle {
+            x: 48px;
+            y: 238px;
+            width: 120px;
+            height: 38px;
+            border-radius: 6px;
+            border-width: 1px;
+            border-color: #5a5d5a;
+            background: #2b2d2b;
+            Text { width: parent.width; y: parent.height / 2 - self.height / 2; text: "Save"; color: #f4f6f3; font-size: 13px; horizontal-alignment: center; }
+            TouchArea { clicked => { root.saveRequested(); } }
+        }
+
+        Rectangle {
+            x: 180px;
+            y: 238px;
+            width: 120px;
+            height: 38px;
+            border-radius: 6px;
+            border-width: 1px;
+            border-color: #5a5d5a;
+            background: #2b2d2b;
+            Text { width: parent.width; y: parent.height / 2 - self.height / 2; text: "Close"; color: #f4f6f3; font-size: 13px; horizontal-alignment: center; }
+            TouchArea { clicked => { root.closeRequested(); } }
+        }
+
+        Text {
+            x: 48px;
+            y: 304px;
+            width: parent.width - 96px;
+            text: root.saveStatus;
+            color: #8f968f;
+            font-size: 12px;
+        }
+    }
+}

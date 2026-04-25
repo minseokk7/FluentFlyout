@@ -13,7 +13,7 @@ using Wpf.Ui.Appearance;
 
 namespace FluentFlyout.Classes.Utils;
 
-internal static class BitmapHelper
+public static class BitmapHelper
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -124,7 +124,7 @@ internal static class BitmapHelper
         }
     }
 
-    internal static BitmapImage? GetThumbnail(IRandomAccessStreamReference? thumbnail, int maxThumbnailSize = _maxThumbnailSize)
+    public static BitmapImage? GetThumbnail(IRandomAccessStreamReference? thumbnail, int maxThumbnailSize = _maxThumbnailSize)
     {
         if (thumbnail == null)
             return null;

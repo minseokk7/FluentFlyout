@@ -8,7 +8,7 @@ use std::thread;
 use std::fs::OpenOptions;
 use std::io::Write;
 use windows::Media::Control::*;
-use windows::Win32::UI::WindowsAndMessaging::{CallNextHookEx, SetWindowsHookExW, UnhookWindowsHookEx, HHOOK, WH_KEYBOARD_LL, KBDLLHOOKSTRUCT, HOOKPROC};
+use windows::Win32::UI::WindowsAndMessaging::{CallNextHookEx, SetWindowsHookExW, UnhookWindowsHookEx, HHOOK, WH_KEYBOARD_LL, KBDLLHOOKSTRUCT};
 use windows::Win32::Foundation::{WPARAM, LPARAM, LRESULT, HINSTANCE, HMODULE};
 use windows::Win32::System::LibraryLoader::GetModuleHandleW;
 use windows::Win32::System::Diagnostics::Debug::OutputDebugStringW;

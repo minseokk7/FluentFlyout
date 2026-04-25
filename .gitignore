@@ -218,6 +218,17 @@ rcf/
 AppPackages/
 BundleArtifacts/
 Package.StoreAssociation.xml
+
+# Rust
+**/target/
+
+# FluentFlyout rewrite build/runtime artifacts
+web-ui/dist/
+web-ui/tauri-dev-*.log
+NUL
+taskbar-widget-crop*.png
+tmp_ui_capture.png
+web-ui-*.png
 _pkginfo.txt
 *.appx
 *.appxbundle

@@ -6,6 +6,7 @@ using FluentFlyout.Classes.Settings;
 using FluentFlyout.Classes.Utils;
 using FluentFlyout.Controls;
 using FluentFlyout.Windows;
+using FluentFlyoutWPF.Classes.Display;
 using FluentFlyoutWPF.Classes;
 using FluentFlyoutWPF.Classes.Utils;
 using FluentFlyoutWPF.ViewModels;
@@ -33,7 +34,7 @@ using static WindowsMediaController.MediaManager;
 
 namespace FluentFlyoutWPF;
 
-public partial class MainWindow : MicaWindow
+public partial class MainWindow : MicaWindow, IDisplayHost
 {
     private static readonly NLog.Logger Logger = NLog.LogManager.GetCurrentClassLogger();
 
@@ -46,6 +47,7 @@ public partial class MainWindow : MicaWindow
     private long _lastFlyoutTime = 0;
 
     public readonly WindowsMediaController.MediaManager mediaManager = new();
+    public WindowsMediaController.MediaManager MediaManager => mediaManager;
 
     // for detecting changes in settings (lazy way)
     private int _position = SettingsManager.Current.Position;
@@ -1432,6 +1434,7 @@ public partial class MainWindow : MicaWindow
             Logger.Warn("Explorer restart detected (TaskbarCreated)");
 
             ExplorerRestarting = true;
+            DisplayHostState.ExplorerRestarting = true;
 
             // Defer recovery, do NOT touch tray/taskbar immediately
             Dispatcher.BeginInvoke(async () =>
@@ -1442,6 +1445,7 @@ public partial class MainWindow : MicaWindow
                     if (await WaitForExplorerReadyAsync())
                     {
                         ExplorerRestarting = false;
+                        DisplayHostState.ExplorerRestarting = false;
                         Logger.Info("Explorer stabilized, resuming taskbar integration");
 
                         // Now it is safe to recreate tray icon

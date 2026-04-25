@@ -4,6 +4,7 @@
 using FluentFlyout.Classes;
 using FluentFlyout.Classes.Settings;
 using FluentFlyoutWPF.Classes;
+using FluentFlyoutWPF.Classes.Display;
 using FluentFlyoutWPF.Classes.Utils;
 using MicaWPF.Controls;
 using System.Windows;
@@ -18,7 +19,7 @@ namespace FluentFlyoutWPF.Windows;
 public partial class LockWindow : MicaWindow
 {
     private CancellationTokenSource cts;
-    MainWindow mainWindow = (MainWindow)Application.Current.MainWindow;
+    IDisplayHost mainWindow = (IDisplayHost)Application.Current.MainWindow;
     private bool _isHiding = true;
     private MonitorUtil.MonitorInfo _openedMonitor;
 
@@ -83,7 +84,7 @@ public partial class LockWindow : MicaWindow
         // lengthen the window width to fit longer translated texts
         if (LocalizationManager.LanguageCode != "en")
         {
-            Width = LocalizationManager.maxLength + 45.0; //Max length of the text + extra space for the icon and padding
+            Width = Math.Max(160.0, LocalizationManager.maxLength + 45.0); // Max length of the text + extra space for the icon and padding
         }
         else
         {

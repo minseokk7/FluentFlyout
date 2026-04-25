@@ -4,6 +4,7 @@
 using FluentFlyout.Classes.Settings;
 using FluentFlyout.Classes.Utils;
 using FluentFlyoutWPF;
+using FluentFlyoutWPF.Classes.Display;
 using MicaWPF.Core.Enums;
 using MicaWPF.Core.Helpers;
 using System.Windows;
@@ -34,7 +35,7 @@ public partial class TaskbarWidgetControl : UserControl
     private double _cachedArtistWidth = 0;
 
     // reference to main window for flyout functions
-    private MainWindow? _mainWindow;
+    private IDisplayHost? _displayHost;
     private bool _isPaused;
 
     public TaskbarWidgetControl()
@@ -88,7 +89,12 @@ public partial class TaskbarWidgetControl : UserControl
 
     public void SetMainWindow(MainWindow mainWindow)
     {
-        _mainWindow = mainWindow;
+        _displayHost = mainWindow;
+    }
+
+    public void SetDisplayHost(IDisplayHost? displayHost)
+    {
+        _displayHost = displayHost;
     }
 
     public void ApplyWindowsTheme()
@@ -171,10 +177,10 @@ public partial class TaskbarWidgetControl : UserControl
 
     private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
     {
-        if (!SettingsManager.Current.TaskbarWidgetClickable || _mainWindow == null) return;
+        if (!SettingsManager.Current.TaskbarWidgetClickable || _displayHost == null) return;
 
         // toggle main flyout when clicked if toggle mode is enabled, otherwise just open
-        _mainWindow.ShowMediaFlyout(toggleMode: SettingsManager.Current.TaskbarWidgetCloseableFlyout, forceShow: true);
+        _displayHost.ShowMediaFlyout(toggleMode: SettingsManager.Current.TaskbarWidgetCloseableFlyout, forceShow: true);
     }
 
     public (double logicalWidth, double logicalHeight) CalculateSize(double dpiScale)
@@ -350,7 +356,7 @@ public partial class TaskbarWidgetControl : UserControl
     {
         try
         {
-            int msDuration = _mainWindow != null ? _mainWindow.getDuration() : 300;
+            int msDuration = _displayHost != null ? _displayHost.getDuration() : 300;
 
             // opacity and left to right animation for SongInfoStackPanel
             DoubleAnimation opacityAnimation = new()
@@ -393,12 +399,12 @@ public partial class TaskbarWidgetControl : UserControl
     // event handlers for media control buttons
     private async void Previous_Click(object sender, RoutedEventArgs e)
     {
-        if (_mainWindow == null) return;
+        if (_displayHost == null) return;
 
-        var mediaManager = _mainWindow.mediaManager;
+        var mediaManager = _displayHost.MediaManager;
         if (mediaManager == null) return;
 
-        var focusedSession = _mainWindow.GetTidalSession();
+        var focusedSession = _displayHost.GetTidalSession();
         if (focusedSession == null) return;
 
         await focusedSession.ControlSession.TrySkipPreviousAsync();
@@ -406,12 +412,12 @@ public partial class TaskbarWidgetControl : UserControl
 
     private async void PlayPause_Click(object sender, RoutedEventArgs e)
     {
-        if (_mainWindow == null) return;
+        if (_displayHost == null) return;
 
-        var mediaManager = _mainWindow.mediaManager;
+        var mediaManager = _displayHost.MediaManager;
         if (mediaManager == null) return;
 
-        var focusedSession = _mainWindow.GetTidalSession();
+        var focusedSession = _displayHost.GetTidalSession();
         if (focusedSession == null) return;
 
         if (_isPaused) // paused
@@ -426,12 +432,12 @@ public partial class TaskbarWidgetControl : UserControl
 
     private async void Next_Click(object sender, RoutedEventArgs e)
     {
-        if (_mainWindow == null) return;
+        if (_displayHost == null) return;
 
-        var mediaManager = _mainWindow.mediaManager;
+        var mediaManager = _displayHost.MediaManager;
         if (mediaManager == null) return;
 
-        var focusedSession = _mainWindow.GetTidalSession();
+        var focusedSession = _displayHost.GetTidalSession();
         if (focusedSession == null) return;
 
         await focusedSession.ControlSession.TrySkipNextAsync();

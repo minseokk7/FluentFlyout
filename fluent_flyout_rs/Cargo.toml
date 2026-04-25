@@ -1,0 +1,20 @@
+﻿[package]
+name = "fluent_flyout_rs"
+version = "0.1.0"
+edition = "2024"
+build = "build.rs"
+
+[dependencies]
+slint = { version = "1.15", features = ["image-default-formats", "raw-window-handle-06"] }
+raw-window-handle = "0.6"
+quick-xml = { version = "0.38", features = ["serialize"] }
+serde = { version = "1", features = ["derive"] }
+image = { version = "0.25", default-features = true }
+fluent_flyout_core = { path = "../fluent_flyout_core" }
+tray-icon = "0.21"
+windows = { version = "0.60", features = ["Media_Control", "Media_Playback", "Foundation_Collections", "Foundation", "Storage_Streams", "Win32_Foundation", "Win32_Graphics_Gdi", "Win32_UI_HiDpi", "Win32_UI_Input_KeyboardAndMouse", "Win32_UI_WindowsAndMessaging"] }
+
+[build-dependencies]
+slint-build = "1.15"
+
+

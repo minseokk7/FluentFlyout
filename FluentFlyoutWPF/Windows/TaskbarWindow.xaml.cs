@@ -4,6 +4,7 @@
 using FluentFlyout.Classes.Settings;
 using FluentFlyoutWPF;
 using FluentFlyoutWPF.Classes;
+using FluentFlyoutWPF.Classes.Display;
 using FluentFlyoutWPF.Classes.Utils;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -34,7 +35,7 @@ public partial class TaskbarWindow : Window
     private AutomationElement? _trayElement;
     private AutomationElement? _taskbarFrameElement;
     // reference to main window for flyout functions
-    private MainWindow? _mainWindow;
+    private IDisplayHost? _displayHost;
     private int _lastSelectedMonitor = -1;
     private bool _positionUpdateInProgress;
     private readonly Dictionary<string, Task> _pendingAutomationTasks = [];
@@ -98,8 +99,19 @@ public partial class TaskbarWindow : Window
     private void Window_Loaded(object sender, RoutedEventArgs e)
     {
         SetupWindow();
-        _mainWindow = (MainWindow)Application.Current.MainWindow;
-        Widget.SetMainWindow(_mainWindow);
+        _displayHost = Application.Current.MainWindow as IDisplayHost;
+        Widget.SetDisplayHost(_displayHost);
+    }
+
+    public void ApplySettingsReload(bool reorderControls)
+    {
+        DataContext = SettingsManager.Current;
+        Widget.DataContext = SettingsManager.Current;
+
+        if (reorderControls)
+            Widget.ReorderControls();
+
+        UpdatePosition();
     }
 
     private IntPtr GetSelectedTaskbarHandle(out bool isMainTaskbarSelected)
@@ -269,7 +281,7 @@ public partial class TaskbarWindow : Window
 
     private void UpdatePosition()
     {
-        if (MainWindow.ExplorerRestarting)
+        if (DisplayHostState.ExplorerRestarting)
         {
             // Explorer is restarting -- do NOTHING
             return;
@@ -286,7 +298,7 @@ public partial class TaskbarWindow : Window
 
             if (interop.Handle == IntPtr.Zero)
             {
-                if (MainWindow.ExplorerRestarting)
+                if (DisplayHostState.ExplorerRestarting)
                 {
                     Logger.Info("Skipping TaskbarWindow recovery during Explorer restart");
                     return;
@@ -298,7 +310,7 @@ public partial class TaskbarWindow : Window
                 {
                     try
                     {
-                        _mainWindow?.RecreateTaskbarWindow();
+                        _displayHost?.RecreateTaskbarWindow();
                     }
                     catch (Exception ex)
                     {
