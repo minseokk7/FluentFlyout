@@ -64,3 +64,33 @@
 
 Website/output.css linguist-generated
 
+###############################################################################
+# GitHub Linguist language statistics for the Tauri rewrite.
+#
+# The active rewrite lives in web-ui/src and web-ui/src-tauri. The original WPF
+# tree is kept as a compatibility/reference source for the display host and
+# should not dominate the repository language bar.
+###############################################################################
+
+# Legacy/reference implementations
+FluentFlyoutWPF/** linguist-vendored
+fluent_flyout_rs/** linguist-vendored
+docs/** linguist-documentation
+
+# Generated dependency locks and Tauri schemas
+**/Cargo.lock linguist-generated
+**/package-lock.json linguist-generated
+web-ui/src-tauri/gen/** linguist-generated
+
+# Static prototype files kept for reference after the Svelte/Tauri migration
+web-ui/app.js linguist-vendored
+web-ui/styles.css linguist-vendored
+
+# Binary/image assets
+*.png binary linguist-generated
+*.ico binary linguist-generated
+*.zip binary linguist-generated
+*.exe binary linguist-generated
+*.dll binary linguist-generated
+*.msi binary linguist-generated
+
