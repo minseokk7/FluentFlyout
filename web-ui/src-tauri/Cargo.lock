@@ -873,7 +873,7 @@ dependencies = [
 
 [[package]]
 name = "fluent-flyout-tauri"
-version = "3.1.2"
+version = "3.1.4"
 dependencies = [
  "base64 0.22.1",
  "dirs",

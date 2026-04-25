@@ -1,6 +1,6 @@
 [package]
 name = "fluent-flyout-tauri"
-version = "3.1.2"
+version = "3.1.4"
 description = "FluentFlyout Rust/Tauri port"
 authors = ["The FluentFlyout Authors"]
 edition = "2024"

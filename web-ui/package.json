@@ -1,6 +1,6 @@
 {
   "name": "fluent-flyout-web-ui",
-  "version": "3.1.2",
+  "version": "3.1.4",
   "private": true,
   "type": "module",
   "scripts": {
