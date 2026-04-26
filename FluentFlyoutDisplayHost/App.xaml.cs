@@ -2,6 +2,7 @@
 // SPDX-License-Identifier: GPL-3.0-or-later
 
 using FluentFlyout.Classes.Settings;
+using System.Diagnostics;
 using System.Windows;
 
 namespace FluentFlyoutDisplayHost;
@@ -26,6 +27,7 @@ public partial class App : Application
 
         base.OnStartup(e);
         Logger.Info("DisplayHost startup begin");
+        StartParentProcessMonitor(e.Args);
 
         try
         {
@@ -43,5 +45,62 @@ public partial class App : Application
         Logger.Info("DisplayHost showing main window");
         MainWindow.Show();
         Logger.Info("DisplayHost main window show returned");
+    }
+
+    private void StartParentProcessMonitor(string[] args)
+    {
+        var parentPid = ParseParentPid(args);
+        if (parentPid is null)
+        {
+            return;
+        }
+
+        Task.Run(async () =>
+        {
+            while (true)
+            {
+                await Task.Delay(1000).ConfigureAwait(false);
+                if (IsProcessAlive(parentPid.Value))
+                {
+                    continue;
+                }
+
+                Logger.Info("부모 FluentFlyout 프로세스가 종료되어 DisplayHost를 종료합니다.");
+                await Dispatcher.InvokeAsync(Shutdown);
+                break;
+            }
+        });
+    }
+
+    private static int? ParseParentPid(string[] args)
+    {
+        for (var i = 0; i < args.Length - 1; i++)
+        {
+            if (args[i].Equals("--parent-pid", StringComparison.OrdinalIgnoreCase)
+                && int.TryParse(args[i + 1], out var pid)
+                && pid > 0)
+            {
+                return pid;
+            }
+        }
+
+        return null;
+    }
+
+    private static bool IsProcessAlive(int pid)
+    {
+        try
+        {
+            using var process = Process.GetProcessById(pid);
+            return !process.HasExited;
+        }
+        catch (ArgumentException)
+        {
+            return false;
+        }
+        catch (InvalidOperationException)
+        {
+            return false;
+        }
     }
 }

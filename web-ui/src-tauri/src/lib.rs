@@ -115,11 +115,21 @@ fn open_logs_folder<R: tauri::Runtime>(app: &tauri::AppHandle<R>) {
 }
 
 fn open_url(url: &str) {
-    let _ = std::process::Command::new("cmd").args(["/C", "start", "", url]).spawn();
+    spawn_hidden(std::process::Command::new("explorer").arg(url));
 }
 
 fn open_path(path: &str) {
-    let _ = std::process::Command::new("explorer").arg(path).spawn();
+    spawn_hidden(std::process::Command::new("explorer").arg(path));
+}
+
+fn spawn_hidden(command: &mut std::process::Command) {
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+    let _ = command.spawn();
 }
 
 #[cfg(windows)]

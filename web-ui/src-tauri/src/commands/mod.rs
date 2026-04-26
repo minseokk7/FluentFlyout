@@ -12,7 +12,13 @@ use crate::{
 
 #[tauri::command]
 pub async fn get_settings(state: State<'_, AppState>) -> AppResult<SettingsDto> {
-    state.settings.load().await
+    match state.settings.load().await {
+        Ok(settings) => Ok(settings),
+        Err(error) => {
+            eprintln!("설정 로드 실패, 기본 설정으로 복구합니다: {error}");
+            Ok(SettingsDto::default())
+        }
+    }
 }
 
 #[tauri::command]
@@ -155,9 +161,7 @@ fn destroy_rust_taskbar_widget(app: &tauri::AppHandle) {
 }
 
 fn open_url(url: &str) {
-    let _ = std::process::Command::new("cmd")
-        .args(["/C", "start", "", url])
-        .spawn();
+    spawn_hidden(std::process::Command::new("explorer").arg(url));
 }
 
 fn open_logs_folder(app: &tauri::AppHandle) -> AppResult<()> {
@@ -170,7 +174,7 @@ fn open_logs_folder(app: &tauri::AppHandle) -> AppResult<()> {
     std::fs::create_dir_all(&path).map_err(|error| {
         AppError::with_detail("logs.create", "로그 폴더를 만들 수 없습니다.", error)
     })?;
-    let _ = std::process::Command::new("explorer").arg(path).spawn();
+    spawn_hidden(std::process::Command::new("explorer").arg(path));
     Ok(())
 }
 
@@ -196,6 +200,16 @@ async fn backup_settings(app: &tauri::AppHandle, state: &State<'_, AppState>) ->
     std::fs::write(&backup_path, json).map_err(|error| {
         AppError::with_detail("backup.write", "설정 백업 파일을 저장할 수 없습니다.", error)
     })?;
-    let _ = std::process::Command::new("explorer").arg(app_dir).spawn();
+    spawn_hidden(std::process::Command::new("explorer").arg(app_dir));
     Ok(())
+}
+
+fn spawn_hidden(command: &mut std::process::Command) {
+    #[cfg(windows)]
+    {
+        use std::os::windows::process::CommandExt;
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        command.creation_flags(CREATE_NO_WINDOW);
+    }
+    let _ = command.spawn();
 }

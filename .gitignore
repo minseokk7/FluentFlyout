@@ -380,3 +380,20 @@ FodyWeavers.xsd
 .vscode/
 
 Website/tailwindcss.exe
+
+# Local build/check artifacts
+build_output/
+publish_output/
+*.log
+build_err*.txt
+build_error*.txt
+build_errors*.txt
+build_output.txt
+check_output.txt
+full_rust_err.txt
+rust_*err*.txt
+rust_errors.txt
+rust_json_errors.txt
+git_diff_*.txt
+log_tail.txt
+fluent_flyout_core/target/

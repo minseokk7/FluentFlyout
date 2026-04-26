@@ -1,7 +1,7 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
   "productName": "FluentFlyout",
-  "version": "3.1.4",
+  "version": "3.1.5",
   "identifier": "com.fluentflyout.rust",
   "build": {
     "beforeDevCommand": "npm run dev",
@@ -80,6 +80,9 @@
   "bundle": {
     "active": true,
     "targets": "all",
-    "icon": ["icons/icon.ico"]
+    "icon": ["icons/icon.ico"],
+    "resources": {
+      "../../FluentFlyoutDisplayHost/bin/x64/Release/net10.0-windows10.0.22000.0/*": "display-host/"
+    }
   }
 }

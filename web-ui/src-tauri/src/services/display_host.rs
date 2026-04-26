@@ -16,6 +16,9 @@ use windows::{
     },
 };
 
+#[cfg(windows)]
+use std::os::windows::process::CommandExt;
+
 static DISPLAY_HOST_PROCESS: OnceLock<Mutex<Option<Child>>> = OnceLock::new();
 
 fn process_slot() -> &'static Mutex<Option<Child>> {
@@ -24,43 +27,38 @@ fn process_slot() -> &'static Mutex<Option<Child>> {
 
 pub fn start() -> AppResult<()> {
     if let Ok(mut guard) = process_slot().lock() {
-        if guard.as_mut().is_some_and(|child| child.try_wait().ok().flatten().is_none()) {
+        if guard
+            .as_mut()
+            .is_some_and(|child| child.try_wait().ok().flatten().is_none())
+        {
             return Ok(());
         }
     }
 
-    let root = find_repo_root().ok_or_else(|| {
-        AppError::new(
-            "display_host.repo_not_found",
-            "표시 전용 WPF 호스트 프로젝트 경로를 찾을 수 없습니다.",
-        )
-    })?;
-
-    let exe = find_display_host_exe(&root).or_else(|| {
-        build_display_host(&root).ok()?;
-        find_display_host_exe(&root)
-    });
-
-    let exe = exe.ok_or_else(|| {
+    let exe = find_display_host_exe().ok_or_else(|| {
         AppError::new(
             "display_host.exe_not_found",
-            "표시 전용 WPF 호스트 실행 파일을 찾을 수 없습니다.",
+            "표시용 WPF 호스트 실행 파일을 찾을 수 없습니다. 릴리즈 번들에 DisplayHost가 포함되어 있는지 확인하세요.",
         )
     })?;
 
-    let child = Command::new(&exe)
-        .current_dir(exe.parent().unwrap_or(&root))
+    let mut command = Command::new(&exe);
+    command
+        .arg("--parent-pid")
+        .arg(std::process::id().to_string())
+        .current_dir(exe.parent().unwrap_or_else(|| Path::new(".")))
         .stdin(Stdio::null())
         .stdout(Stdio::null())
-        .stderr(Stdio::null())
-        .spawn()
-        .map_err(|error| {
-            AppError::with_detail(
-                "display_host.start_failed",
-                "표시 전용 WPF 호스트 실행에 실패했습니다.",
-                error,
-            )
-        })?;
+        .stderr(Stdio::null());
+    hide_console(&mut command);
+
+    let child = command.spawn().map_err(|error| {
+        AppError::with_detail(
+            "display_host.start_failed",
+            "표시용 WPF 호스트 실행에 실패했습니다.",
+            error,
+        )
+    })?;
 
     if let Ok(mut guard) = process_slot().lock() {
         *guard = Some(child);
@@ -103,7 +101,7 @@ fn signal_event(name: &str) -> AppResult<()> {
     let mut last_error = None;
     let mut handle = None;
 
-    // 호스트 프로세스를 막 시작한 직후에는 named event 생성보다 신호가 먼저 갈 수 있다.
+    // 호스트 프로세스 시작 직후에는 named event 생성보다 신호가 먼저 갈 수 있다.
     // 짧게 재시도해서 UI 명령이 간헐적으로 누락되는 문제를 막는다.
     for _ in 0..20 {
         match unsafe { OpenEventW(EVENT_MODIFY_STATE, false, &name) } {
@@ -146,6 +144,55 @@ fn signal_event(name: &str) -> AppResult<()> {
     Ok(())
 }
 
+fn find_display_host_exe() -> Option<PathBuf> {
+    display_host_candidates()
+        .into_iter()
+        .find(|path| path.exists())
+}
+
+fn display_host_candidates() -> Vec<PathBuf> {
+    let mut candidates = Vec::new();
+
+    if let Ok(current_exe) = env::current_exe() {
+        if let Some(exe_dir) = current_exe.parent() {
+            candidates.push(
+                exe_dir
+                    .join("display-host")
+                    .join("FluentFlyoutDisplayHost.exe"),
+            );
+            candidates.push(
+                exe_dir
+                    .join("resources")
+                    .join("display-host")
+                    .join("FluentFlyoutDisplayHost.exe"),
+            );
+            candidates.push(exe_dir.join("FluentFlyoutDisplayHost.exe"));
+        }
+    }
+
+    if let Some(root) = find_repo_root() {
+        let base = root.join("FluentFlyoutDisplayHost").join("bin");
+        candidates.extend([
+            base.join("x64")
+                .join("Release")
+                .join("net10.0-windows10.0.22000.0")
+                .join("FluentFlyoutDisplayHost.exe"),
+            base.join("Release")
+                .join("net10.0-windows10.0.22000.0")
+                .join("FluentFlyoutDisplayHost.exe"),
+            base.join("x64")
+                .join("Debug")
+                .join("net10.0-windows10.0.22000.0")
+                .join("FluentFlyoutDisplayHost.exe"),
+            base.join("Debug")
+                .join("net10.0-windows10.0.22000.0")
+                .join("FluentFlyoutDisplayHost.exe"),
+        ]);
+    }
+
+    candidates
+}
+
 fn find_repo_root() -> Option<PathBuf> {
     let mut starts = Vec::new();
 
@@ -172,54 +219,10 @@ fn find_repo_root() -> Option<PathBuf> {
         })
 }
 
-fn find_display_host_exe(root: &Path) -> Option<PathBuf> {
-    let base = root.join("FluentFlyoutDisplayHost").join("bin");
-    let candidates = [
-        base.join("x64")
-            .join("Debug")
-            .join("net10.0-windows10.0.22000.0")
-            .join("FluentFlyoutDisplayHost.exe"),
-        base.join("Debug")
-            .join("net10.0-windows10.0.22000.0")
-            .join("FluentFlyoutDisplayHost.exe"),
-        base.join("x64")
-            .join("Release")
-            .join("net10.0-windows10.0.22000.0")
-            .join("FluentFlyoutDisplayHost.exe"),
-        base.join("Release")
-            .join("net10.0-windows10.0.22000.0")
-            .join("FluentFlyoutDisplayHost.exe"),
-    ];
-
-    candidates.into_iter().find(|path| path.exists())
-}
-
-fn build_display_host(root: &Path) -> AppResult<()> {
-    let status = Command::new("dotnet")
-        .args([
-            "build",
-            "FluentFlyoutDisplayHost\\FluentFlyoutDisplayHost.csproj",
-            "-c",
-            "Debug",
-            "-p:Platform=x64",
-        ])
-        .current_dir(root)
-        .status()
-        .map_err(|error| {
-            AppError::with_detail(
-                "display_host.build_start_failed",
-                "표시 전용 WPF 호스트 빌드를 시작할 수 없습니다.",
-                error,
-            )
-        })?;
-
-    if status.success() {
-        Ok(())
-    } else {
-        Err(AppError::with_detail(
-            "display_host.build_failed",
-            "표시 전용 WPF 호스트 빌드에 실패했습니다.",
-            status,
-        ))
+fn hide_console(command: &mut Command) {
+    #[cfg(windows)]
+    {
+        const CREATE_NO_WINDOW: u32 = 0x0800_0000;
+        command.creation_flags(CREATE_NO_WINDOW);
     }
 }

@@ -19,6 +19,11 @@ async function call<T>(command: string, args?: Record<string, unknown>): Promise
     const api = await import('@tauri-apps/api/core');
     return await api.invoke<T>(command, args);
   } catch (error) {
+    if (command === 'get_settings') {
+      console.error('설정 로드에 실패해 기본 설정으로 복구합니다.', error);
+      return structuredClone(defaultSettings) as T;
+    }
+
     const appError = error as Partial<AppError> & { messageKo?: string; message?: string };
     const message =
       appError?.message_ko ??
