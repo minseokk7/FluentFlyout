@@ -30,10 +30,9 @@ pub fn run() {
             Ok(())
         })
         .on_window_event(|window, event| match event {
-            tauri::WindowEvent::CloseRequested { .. } if window.label() == "main" => {
-                cleanup_taskbar_widget(window.app_handle());
-                display_host::stop_if_owned();
-                window.app_handle().exit(0);
+            tauri::WindowEvent::CloseRequested { api, .. } if window.label() == "main" => {
+                api.prevent_close();
+                let _ = window.hide();
             }
             _ => {}
         })
